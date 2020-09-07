@@ -67,11 +67,15 @@ defmodule TimeSeriesTest do
 
       dimensions = %{env: "test"}
 
-      assert [] ==
-               MyTimeSeriesApp.read("seeded-metric-name", dimensions,
-                 from: time_one,
-                 till: time_two
-               )
+      assert [
+               %TimeSeries.Schema.Measurement{
+                 dimensions: %{"env" => "test"},
+                 measurement_id: _measurement_id,
+                 name: "seeded-metric-name",
+                 time: ~U[2020-09-07 20:00:00Z],
+                 value: 3
+               }
+             ] = MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
     end
   end
 end

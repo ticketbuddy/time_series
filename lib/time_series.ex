@@ -18,12 +18,16 @@ defmodule TimeSeries do
     |> format_result()
   end
 
-  def read(repo, metric, dimensions, time_span) do
+  def read(repo, metric, dimensions, {from, till}) do
     import Ecto.Query
     import Ecto.Query.API
     import TimeSeries.Query
 
-    Schema.Measurement
+    from(
+      m in Schema.Measurement,
+      where: m.time >= ^from,
+      where: m.time <= ^till
+    )
     |> where(
       [_q],
       ^json_multi_expressions(:dimensions, dimensions)
