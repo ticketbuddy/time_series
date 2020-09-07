@@ -11,8 +11,6 @@ defmodule TimeSeries.Query do
 
     * `conjunction`: define whether to use `and` or `or` to join dynamic
     expressions for each parameter. By default uses `and`.
-    * `gen_dynamic` - An optional function to generate a dynamic fragment
-    (using `Ecto.Query.dynamic`).
   """
   defmacro json_multi_expressions(col, params, opts \\ []) do
     # conjuctive operator to be used between fragments
@@ -26,8 +24,6 @@ defmodule TimeSeries.Query do
       )
     end
   end
-
-  def build_expressions(params, col, conjunction)
 
   def build_expressions(params, col, conjunction) do
     Enum.reduce(params, nil, fn {key, val}, acc ->
@@ -45,7 +41,6 @@ defmodule TimeSeries.Query do
   end
 
   def build_fragment(col, key, val) do
-    # build default dynamic fragment
     dynamic(
       [q],
       fragment(
@@ -56,8 +51,6 @@ defmodule TimeSeries.Query do
     )
   end
 
-  @doc false
-  def do_combine(frag, acc, conjunction)
   def do_combine(frag, nil, _), do: frag
   def do_combine(frag, acc, :or), do: dynamic([q], ^acc or ^frag)
   def do_combine(frag, acc, _), do: dynamic([q], ^acc and ^frag)
