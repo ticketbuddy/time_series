@@ -14,7 +14,7 @@ defmodule TimeSeries do
       value: value,
       dimensions: dimensions
     })
-    |> repo.insert()
+    |> repo.insert(conflict_target: [:name, :time], on_conflict: [inc: [value: value]])
     |> format_result()
   end
 

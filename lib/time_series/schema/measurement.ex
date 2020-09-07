@@ -13,8 +13,8 @@ defmodule TimeSeries.Schema.Measurement do
     import Ecto.Changeset
 
     %__MODULE__{}
-    |> cast(params, [:name, :time, :dimensions])
-    |> validate_required([:name, :time, :dimensions])
+    |> cast(params, [:name, :time, :dimensions, :value])
+    |> validate_required([:name, :time, :dimensions, :value])
     |> unique_constraint([:name, :time],
       name: :time_locking
     )

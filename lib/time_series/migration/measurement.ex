@@ -6,7 +6,7 @@ defmodule TimeSeries.Migration.Measurement do
       add(:measurement_id, :uuid, primary_key: true, null: false)
       add(:name, :string, null: false)
       add(:time, :utc_datetime)
-      add(:value, :integer)
+      add(:value, :integer, null: false)
       add(:dimensions, :map, null: false)
     end
 
