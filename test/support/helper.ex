@@ -1,4 +1,12 @@
 defmodule Test.Support.Helper do
+  @valid_measures [:hours, :minutes, :seconds]
+
+  def time_travel(datetime, {value, measurement})
+      when value > 0 and measurement in @valid_measures do
+    opts = Keyword.new([{measurement, value}])
+    Timex.shift(datetime, opts)
+  end
+
   defmacro __using__(repo: repos) do
     quote do
       setup tags do

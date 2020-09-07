@@ -18,6 +18,20 @@ defmodule TimeSeries do
     |> format_result()
   end
 
+  def read(repo, metric, dimensions, time_span) do
+    import Ecto.Query
+    import Ecto.Query.API
+    import TimeSeries.Query
+
+    Schema.Measurement
+    |> where(
+      [_q],
+      ^json_multi_expressions(:dimensions, dimensions)
+    )
+    |> where(name: ^metric)
+    |> repo.all()
+  end
+
   defp format_result({:ok, _result}), do: :ok
   defp format_result({:error, _result}), do: :error
 
@@ -27,6 +41,10 @@ defmodule TimeSeries do
 
       def inc(name, dimensions, opts \\ []) do
         TimeSeries.inc(@repo, name, dimensions, opts)
+      end
+
+      def read(metric, dimensions, time_span) do
+        TimeSeries.read(@repo, metric, dimensions, time_span)
       end
     end
   end

@@ -59,4 +59,19 @@ defmodule TimeSeriesTest do
              } = Test.Support.Repo.get_by(TimeSeries.Schema.Measurement, time: occured_at)
     end
   end
+
+  describe "queries records" do
+    test "fetches records between two times" do
+      time_one = ~U[2020-09-07 17:24:00Z]
+      time_two = ~U[2020-09-07 21:24:00Z]
+
+      dimensions = %{env: "test"}
+
+      assert [] ==
+               MyTimeSeriesApp.read("seeded-metric-name", dimensions,
+                 from: time_one,
+                 till: time_two
+               )
+    end
+  end
 end
