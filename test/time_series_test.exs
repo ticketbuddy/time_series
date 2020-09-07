@@ -63,19 +63,44 @@ defmodule TimeSeriesTest do
   describe "queries records" do
     test "fetches records between two times" do
       time_one = ~U[2020-09-07 17:24:00Z]
-      time_two = ~U[2020-09-07 21:24:00Z]
+      time_two = ~U[2020-09-07 23:24:00Z]
 
       dimensions = %{env: "test"}
 
       assert [
-               %TimeSeries.Schema.Measurement{
-                 dimensions: %{"env" => "test"},
-                 measurement_id: _measurement_id,
-                 name: "seeded-metric-name",
-                 time: ~U[2020-09-07 20:00:00Z],
-                 value: 3
-               }
-             ] = MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
+               {~U[2020-09-07 20:00:00Z], 3},
+               {~U[2020-09-07 23:00:00Z], 3}
+             ] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
+    end
+
+    test "when no dimensions are given" do
+      time_one = ~U[2020-09-07 17:24:00Z]
+      time_two = ~U[2020-09-07 23:24:00Z]
+
+      dimensions = %{}
+
+      assert [
+               {~U[2020-09-07 20:00:00Z], 3},
+               {~U[2020-09-07 23:00:00Z], 3}
+             ] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
+    end
+
+    test "when dimensions do not match, runs query without dimensions checks" do
+      time_one = ~U[2020-09-07 17:24:00Z]
+      time_two = ~U[2020-09-07 23:24:00Z]
+
+      dimensions = %{env: "foo"}
+
+      assert [] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
+    end
+
+    test "when times don't return any records" do
+      time_one = ~U[2020-09-07 17:24:00Z]
+      time_two = ~U[2020-09-07 19:24:00Z]
+
+      dimensions = %{env: "test"}
+
+      assert [] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
     end
   end
 end

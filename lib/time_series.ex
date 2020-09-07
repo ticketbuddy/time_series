@@ -2,6 +2,11 @@ defmodule TimeSeries do
   @moduledoc """
   Documentation for TimeSeries.
   """
+
+  import Ecto.Query
+  import Ecto.Query.API
+  import TimeSeries.Query
+
   alias TimeSeries.Schema
 
   def inc(repo, name, dimensions, opts) do
@@ -19,21 +24,28 @@ defmodule TimeSeries do
   end
 
   def read(repo, metric, dimensions, {from, till}) do
-    import Ecto.Query
-    import Ecto.Query.API
-    import TimeSeries.Query
-
     from(
       m in Schema.Measurement,
       where: m.time >= ^from,
-      where: m.time <= ^till
+      where: m.time <= ^till,
+      select: {m.time, sum(m.value)},
+      group_by: m.time
     )
-    |> where(
-      [_q],
-      ^json_multi_expressions(:dimensions, dimensions)
-    )
+    |> where_dimensions(dimensions)
     |> where(name: ^metric)
     |> repo.all()
+  end
+
+  defp where_dimensions(query, dimensions) do
+    if Kernel.==(dimensions, %{}) do
+      query
+    else
+      query
+      |> where(
+        [_q],
+        ^json_multi_expressions(:dimensions, dimensions)
+      )
+    end
   end
 
   defp format_result({:ok, _result}), do: :ok
