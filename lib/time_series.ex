@@ -4,10 +4,11 @@ defmodule TimeSeries do
   """
 
   import Ecto.Query
-  import Ecto.Query.API
   import TimeSeries.Query
 
   alias TimeSeries.Schema
+
+  @valid_granularities ["hour", "day", "month", "week"]
 
   def inc(repo, name, dimensions, opts) do
     time = Keyword.get(opts, :time, DateTime.utc_now())
@@ -23,13 +24,17 @@ defmodule TimeSeries do
     |> format_result()
   end
 
-  def read(repo, metric, dimensions, {from, till}) do
+  def read(repo, metric, dimensions, {from, till}, granularity \\ "hour")
+      when granularity in @valid_granularities do
     from(
       m in Schema.Measurement,
       where: m.time >= ^from,
       where: m.time <= ^till,
-      select: {m.time, sum(m.value)},
-      group_by: m.time
+      select:
+        {fragment("date_trunc(?, ? AT TIME ZONE 'UTC') as granular_date", ^granularity, m.time),
+         sum(m.value)},
+      order_by: fragment("granular_date"),
+      group_by: fragment("granular_date")
     )
     |> where_dimensions(dimensions)
     |> where(name: ^metric)
@@ -37,7 +42,7 @@ defmodule TimeSeries do
   end
 
   defp where_dimensions(query, dimensions) do
-    if Kernel.==(dimensions, %{}) do
+    if dimensions == %{} do
       query
     else
       query

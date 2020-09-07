@@ -1,6 +1,7 @@
 defmodule TimeSeries.Schema.Measurement do
   use Ecto.Schema
   @primary_key {:measurement_id, :binary_id, autogenerate: true}
+  @timestamps_opts [type: :utc_datetime]
 
   schema "measurement" do
     field(:name, :string, null: false)
