@@ -24,7 +24,7 @@ defmodule TimeSeries do
     |> format_result()
   end
 
-  def read(repo, metric, dimensions, {from, till}, granularity \\ "hour")
+  def read(repo, metric, dimensions, {from, till}, granularity)
       when granularity in @valid_granularities do
     from(
       m in Schema.Measurement,
@@ -64,8 +64,8 @@ defmodule TimeSeries do
         TimeSeries.inc(@repo, name, dimensions, opts)
       end
 
-      def read(metric, dimensions, time_span) do
-        TimeSeries.read(@repo, metric, dimensions, time_span)
+      def read(metric, dimensions, time_span, granularity \\ "hour") do
+        TimeSeries.read(@repo, metric, dimensions, time_span, granularity)
       end
     end
   end

@@ -73,6 +73,22 @@ defmodule TimeSeriesTest do
              ] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
     end
 
+    test "when granularity is set to weekly" do
+      time_one = ~U[2020-09-07 17:24:00Z]
+      time_two = ~U[2020-09-07 23:24:00Z]
+
+      dimensions = %{env: "test"}
+      granularity = "week"
+
+      assert [
+               {~U[2020-09-07 00:00:00.000000Z], 6}
+             ] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two}, granularity)
+    end
+
+    test "when granularity is daily"
+    test "when granularity is monthly"
+    test "when granularity is yearly"
+
     test "when no dimensions are given" do
       time_one = ~U[2020-09-07 17:24:00Z]
       time_two = ~U[2020-09-07 23:24:00Z]
