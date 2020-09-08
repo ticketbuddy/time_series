@@ -33,7 +33,7 @@ defmodule TimeSeries do
       m in Schema.Measurement,
       where: m.time >= ^from,
       where: m.time <= ^till,
-      select: {fragment("date_trunc(?, time) as granular_date", ^granularity), sum(m.value)},
+      select: [fragment("date_trunc(?, time) as granular_date", ^granularity), sum(m.value)],
       order_by: fragment("granular_date"),
       group_by: fragment("granular_date")
     )

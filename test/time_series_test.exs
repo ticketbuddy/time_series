@@ -71,8 +71,8 @@ defmodule TimeSeriesTest do
       dimensions = %{env: "test"}
 
       assert [
-               {~N[2020-09-07 20:00:00.000000], 3},
-               {~N[2020-09-07 23:00:00.000000], 3}
+               [~N[2020-09-07 20:00:00.000000], 3],
+               [~N[2020-09-07 23:00:00.000000], 3]
              ] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
     end
 
@@ -84,7 +84,7 @@ defmodule TimeSeriesTest do
       granularity = "week"
 
       assert [
-               {~N[2020-09-07 00:00:00.000000], 54}
+               [~N[2020-09-07 00:00:00.000000], 54]
              ] ==
                MyTimeSeriesApp.read(
                  "seeded-metric-name",
@@ -102,9 +102,9 @@ defmodule TimeSeriesTest do
       granularity = "day"
 
       assert [
-               {~N[2020-09-07 00:00:00.000000], 6},
-               {~N[2020-09-08 00:00:00.000000], 24},
-               {~N[2020-09-09 00:00:00.000000], 24}
+               [~N[2020-09-07 00:00:00.000000], 6],
+               [~N[2020-09-08 00:00:00.000000], 24],
+               [~N[2020-09-09 00:00:00.000000], 24]
              ] ==
                MyTimeSeriesApp.read(
                  "seeded-metric-name",
@@ -137,8 +137,8 @@ defmodule TimeSeriesTest do
       dimensions = %{}
 
       assert [
-               {~N[2020-09-07 20:00:00.000000], 3},
-               {~N[2020-09-07 23:00:00.000000], 3}
+               [~N[2020-09-07 20:00:00.000000], 3],
+               [~N[2020-09-07 23:00:00.000000], 3]
              ] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
     end
 
