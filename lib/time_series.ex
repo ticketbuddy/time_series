@@ -13,10 +13,11 @@ defmodule TimeSeries do
   def inc(repo, name, dimensions, opts) do
     time = Keyword.get(opts, :time, DateTime.utc_now())
     value = Keyword.get(opts, :value, 1)
+    accuracy = Keyword.get(opts, :accuracy, :hour)
 
     Schema.Measurement.changeset(%{
       name: name,
-      time: time,
+      time: TimeSeries.Clock.truncate(time, accuracy),
       value: value,
       dimensions: dimensions
     })

@@ -42,7 +42,7 @@ defmodule TimeSeriesTest do
       assert :ok == MyTimeSeriesApp.inc("another-metric", dimensions, time: occured_at)
     end
 
-    test "increments same datetime, same metric name" do
+    test "increments same datetime (default truncated hour), same metric name" do
       dimensions = %{
         environment: "live"
       }
@@ -52,11 +52,14 @@ defmodule TimeSeriesTest do
       assert :ok == MyTimeSeriesApp.inc("a-metric", dimensions, time: occured_at)
       assert :ok == MyTimeSeriesApp.inc("a-metric", dimensions, time: occured_at)
 
+      truncated_occured_at = TimeSeries.Clock.truncate(occured_at, :hour)
+
       assert %TimeSeries.Schema.Measurement{
                dimensions: %{"environment" => "live"},
                name: "a-metric",
                value: 2
-             } = Test.Support.Repo.get_by(TimeSeries.Schema.Measurement, time: occured_at)
+             } =
+               Test.Support.Repo.get_by(TimeSeries.Schema.Measurement, time: truncated_occured_at)
     end
   end
 
