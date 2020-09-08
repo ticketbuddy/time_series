@@ -68,26 +68,64 @@ defmodule TimeSeriesTest do
       dimensions = %{env: "test"}
 
       assert [
-               {~U[2020-09-07 20:00:00.000000Z], 3},
-               {~U[2020-09-07 23:00:00.000000Z], 3}
+               {~N[2020-09-07 20:00:00.000000], 3},
+               {~N[2020-09-07 23:00:00.000000], 3}
              ] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
     end
 
     test "when granularity is set to weekly" do
       time_one = ~U[2020-09-07 17:24:00Z]
-      time_two = ~U[2020-09-07 23:24:00Z]
+      time_two = ~U[2020-09-09 23:24:00Z]
 
       dimensions = %{env: "test"}
       granularity = "week"
 
       assert [
-               {~U[2020-09-07 00:00:00.000000Z], 6}
-             ] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two}, granularity)
+               {~N[2020-09-07 00:00:00.000000], 54}
+             ] ==
+               MyTimeSeriesApp.read(
+                 "seeded-metric-name",
+                 dimensions,
+                 {time_one, time_two},
+                 granularity
+               )
     end
 
-    test "when granularity is daily"
-    test "when granularity is monthly"
-    test "when granularity is yearly"
+    test "when granularity is daily" do
+      time_one = ~U[2020-09-07 17:24:00Z]
+      time_two = ~U[2020-09-09 23:24:00Z]
+
+      dimensions = %{env: "test"}
+      granularity = "day"
+
+      assert [
+               {~N[2020-09-07 00:00:00.000000], 6},
+               {~N[2020-09-08 00:00:00.000000], 24},
+               {~N[2020-09-09 00:00:00.000000], 24}
+             ] ==
+               MyTimeSeriesApp.read(
+                 "seeded-metric-name",
+                 dimensions,
+                 {time_one, time_two},
+                 granularity
+               )
+    end
+
+    test "when granularity is monthly" do
+      time_one = ~U[2020-09-07 17:24:00Z]
+      time_two = ~U[2020-09-09 23:24:00Z]
+
+      dimensions = %{env: "test"}
+      granularity = "month"
+
+      assert [{~N[2020-09-01 00:00:00.000000], 54}],
+             MyTimeSeriesApp.read(
+               "seeded-metric-name",
+               dimensions,
+               {time_one, time_two},
+               granularity
+             )
+    end
 
     test "when no dimensions are given" do
       time_one = ~U[2020-09-07 17:24:00Z]
@@ -96,8 +134,8 @@ defmodule TimeSeriesTest do
       dimensions = %{}
 
       assert [
-               {~U[2020-09-07 20:00:00.000000Z], 3},
-               {~U[2020-09-07 23:00:00.000000Z], 3}
+               {~N[2020-09-07 20:00:00.000000], 3},
+               {~N[2020-09-07 23:00:00.000000], 3}
              ] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
     end
 
