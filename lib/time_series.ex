@@ -8,8 +8,6 @@ defmodule TimeSeries do
 
   alias TimeSeries.Schema
 
-  @valid_granularities ["hour", "day", "month", "week"]
-
   def inc(repo, name, dimensions, opts) do
     time = Keyword.get(opts, :time, DateTime.utc_now())
     value = Keyword.get(opts, :value, 1)
@@ -25,17 +23,16 @@ defmodule TimeSeries do
     |> format_result()
   end
 
-  def read(repo, metric, dimensions, {from, till}, granularity)
-      when granularity in @valid_granularities do
+  def read(repo, metric, dimensions, {from, till}) do
     timezone = "UTC"
 
     from(
       m in Schema.Measurement,
       where: m.time >= ^from,
       where: m.time <= ^till,
-      select: [fragment("date_trunc(?, time) as granular_date", ^granularity), sum(m.value)],
-      order_by: fragment("granular_date"),
-      group_by: fragment("granular_date")
+      select: [m.time, sum(m.value)],
+      order_by: m.time,
+      group_by: m.time
     )
     |> where_dimensions(dimensions)
     |> where(name: ^metric)
@@ -65,8 +62,8 @@ defmodule TimeSeries do
         TimeSeries.inc(@repo, name, dimensions, opts)
       end
 
-      def read(metric, dimensions, time_span, granularity \\ "hour") do
-        TimeSeries.read(@repo, metric, dimensions, time_span, granularity)
+      def read(metric, dimensions, time_span) do
+        TimeSeries.read(@repo, metric, dimensions, time_span)
       end
     end
   end
