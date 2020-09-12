@@ -3,6 +3,8 @@ defmodule TimeSeries do
   Documentation for TimeSeries.
   """
 
+  alias TimeSeries.Clock
+
   import Ecto.Query
   import TimeSeries.Query
 
@@ -26,17 +28,20 @@ defmodule TimeSeries do
   def read(repo, metric, dimensions, {from, till}) do
     timezone = "UTC"
 
+    empty_hours = Clock.build_empty_hours(from, till)
+
     from(
       m in Schema.Measurement,
       where: m.time >= ^from,
       where: m.time <= ^till,
-      select: [m.time, sum(m.value)],
+      select: {m.time, sum(m.value)},
       order_by: m.time,
       group_by: m.time
     )
     |> where_dimensions(dimensions)
     |> where(name: ^metric)
     |> repo.all()
+    |> Enum.into(empty_hours)
   end
 
   defp where_dimensions(query, dimensions) do
