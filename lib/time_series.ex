@@ -42,6 +42,15 @@ defmodule TimeSeries do
     |> where(name: ^metric)
     |> repo.all()
     |> Enum.into(empty_hours)
+    |> order()
+  end
+
+  defp order(data) when is_map(data) do
+    data
+    |> Enum.reduce([], fn {date, value}, acc ->
+      [[date, value] | acc]
+    end)
+    |> Enum.sort_by(&Enum.at(&1, 0))
   end
 
   defp where_dimensions(query, dimensions) do

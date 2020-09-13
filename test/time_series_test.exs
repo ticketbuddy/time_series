@@ -70,15 +70,15 @@ defmodule TimeSeriesTest do
 
       dimensions = %{env: "test"}
 
-      assert %{
-               ~U[2020-09-07 17:00:00Z] => 0,
-               ~U[2020-09-07 18:00:00Z] => 0,
-               ~U[2020-09-07 19:00:00Z] => 0,
-               ~U[2020-09-07 20:00:00Z] => 3,
-               ~U[2020-09-07 21:00:00Z] => 0,
-               ~U[2020-09-07 22:00:00Z] => 0,
-               ~U[2020-09-07 23:00:00Z] => 3
-             } == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
+      assert [
+               [~U[2020-09-07 17:00:00Z], 0],
+               [~U[2020-09-07 18:00:00Z], 0],
+               [~U[2020-09-07 19:00:00Z], 0],
+               [~U[2020-09-07 20:00:00Z], 3],
+               [~U[2020-09-07 21:00:00Z], 0],
+               [~U[2020-09-07 22:00:00Z], 0],
+               [~U[2020-09-07 23:00:00Z], 3]
+             ] == MyTimeSeriesApp.read("seeded-metric-name", dimensions, {time_one, time_two})
     end
   end
 end
