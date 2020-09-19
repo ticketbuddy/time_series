@@ -50,7 +50,9 @@ defmodule TimeSeries do
     |> Enum.reduce([], fn {date, value}, acc ->
       [[date, value] | acc]
     end)
-    |> Enum.sort_by(&Enum.at(&1, 0))
+    |> Enum.sort(fn [dt_one, _], [dt_two, _] ->
+      DateTime.compare(dt_one, dt_two) != :gt
+    end)
   end
 
   defp where_dimensions(query, dimensions) do
