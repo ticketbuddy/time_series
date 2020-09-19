@@ -8,12 +8,13 @@ defmodule TimeSeries.Migration.Measurement do
       add(:time, :timestamp)
       add(:value, :integer, null: false)
       add(:dimensions, :map, null: false)
+      add(:hash, :string, null: false)
     end
 
     create(
       unique_index(
         :measurement,
-        [:name, :time],
+        [:time, :hash],
         name: :time_locking
       )
     )

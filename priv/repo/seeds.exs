@@ -11,7 +11,8 @@ for c <- 1..80 do
       time: dt,
       name: "seeded-metric-name",
       value: 3,
-      dimensions: %{env: "test"}
+      dimensions: %{env: "test"},
+      hash: "abc12345"
     })
   end
 end
@@ -23,7 +24,8 @@ for c <- 1..50 do
       time: dt,
       name: "another-metric-name",
       value: 5,
-      dimensions: %{env: "live"}
+      dimensions: %{env: "live"},
+      hash: "def67891"
     })
   end
 end
